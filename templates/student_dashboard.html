@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Student Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      background: linear-gradient(135deg, #000000, #6d5585);
+      background: linear-gradient(135deg, #000000, #6d5585);
+background-image: url('/static/uploads/tgp_logo.png');
+background-size: cover;
+
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .fade-in { animation: fadeIn 0.8s ease-in-out; }
+
+    .glass-card {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+  </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-6 font-sans">
+
+  <div class="glass-card rounded-3xl shadow-2xl w-full max-w-6xl p-10 space-y-10 fade-in">
+
+    <!-- Header -->
+    <div class="text-center">
+      <h1 class="text-5xl font-extrabold text-white mb-2 drop-shadow-lg">Student Dashboard</h1>
+      <p class="text-gray-200 italic">Track your academic journey ✨</p>
+    </div>
+
+    <!-- Profile Section -->
+    <div class="flex flex-col md:flex-row justify-between items-center text-white space-y-6 md:space-y-0">
+
+      <!-- Student Info -->
+      <div class="flex items-center space-x-6">
+        <img
+          src="{{ student_info['photo_url'] }}"
+          alt="Student Photo"
+          class="w-24 h-24 rounded-full shadow-lg border-2 border-white"
+        />
+        <div>
+          <h2 class="text-2xl font-bold">{{ student_info['full_name'] }}</h2>
+          <p>Name: {{ student_info['name'] }}</p>
+          <p>ID: {{ student_info['student_id'] }}</p>
+          <p>Phone: {{ student_info['phone_number'] }}</p>
+          <p>Parent: {{ student_info['parent_phone_number'] }}</p>
+        </div>
+      </div>
+
+      <!-- Attendance -->
+      <div class="flex flex-col items-center">
+        <div class="relative">
+          <svg class="w-24 h-24 transform -rotate-90" viewBox="0 0 100 100">
+            <circle class="text-white/30" stroke-width="10" stroke="currentColor" fill="transparent" r="40" cx="50" cy="50"/>
+            <circle
+              class="text-blue-400"
+              stroke-width="10"
+              stroke-dasharray="251"
+              stroke-dashoffset="{{ 251 - (251 * attendance.attendance_percentage / 100) }}"
+              stroke-linecap="round"
+              stroke="currentColor"
+              fill="transparent"
+              r="40"
+              cx="50"
+              cy="50"
+            />
+          </svg>
+          <div class="absolute inset-0 flex items-center justify-center">
+            <span class="text-white text-xl font-bold">{{ attendance.attendance_percentage }}%</span>
+          </div>
+        </div>
+        <p class="text-white mt-2">Attendance</p>
+      </div>
+
+    </div>
+
+    <!-- Marks Section -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      
+      <!-- CT1 Marks -->
+      <div class="glass-card p-6 rounded-2xl shadow-md">
+        <h3 class="text-xl font-semibold text-white mb-4">CT1 Marks</h3>
+        <table class="w-full text-white text-sm">
+          {% for mark in ct1_marks %}
+          <tr>
+            <td class="py-2">Subject {{ loop.index }}</td>
+            <td class="py-2 text-right">{{ mark['marks'] }}</td>
+          </tr>
+          {% endfor %}
+          <tr class="font-bold">
+            <td class="py-2">Total</td>
+            <td class="py-2 text-right">{{ ct1_total }}</td>
+          </tr>
+        </table>
+      </div>
+
+      <!-- CT2 Marks -->
+      <div class="glass-card p-6 rounded-2xl shadow-md">
+        <h3 class="text-xl font-semibold text-white mb-4">CT2 Marks</h3>
+        <table class="w-full text-white text-sm">
+          {% for mark in ct2_marks %}
+          <tr>
+            <td class="py-2">Subject {{ loop.index }}</td>
+            <td class="py-2 text-right">{{ mark['marks'] }}</td>
+          </tr>
+          {% endfor %}
+          <tr class="font-bold">
+            <td class="py-2">Total</td>
+            <td class="py-2 text-right">{{ ct2_total }}</td>
+          </tr>
+        </table>
+      </div>
+
+      <!-- Semester Marks -->
+      <div class="glass-card p-6 rounded-2xl shadow-md">
+        <h3 class="text-xl font-semibold text-white mb-4">Semester Marks</h3>
+        <table class="w-full text-white text-sm">
+          {% for mark in semester_marks %}
+          <tr>
+            <td class="py-2">Subject {{ loop.index }}</td>
+            <td class="py-2 text-right">{{ mark['marks'] }}</td>
+          </tr>
+          {% endfor %}
+          <tr class="font-bold">
+            <td class="py-2">Total</td>
+            <td class="py-2 text-right">{{ semester_total }}</td>
+          </tr>
+        </table>
+      </div>
+
+    </div>
+
+    <!-- Leave History -->
+    <div class="glass-card p-6 rounded-2xl shadow-md">
+      <h3 class="text-xl font-semibold text-white mb-4">Leave History</h3>
+      <table class="w-full text-white text-sm">
+        <thead>
+          <tr class="border-b border-white/30">
+            <th class="text-left py-2">Date</th>
+            <th class="text-left py-2">Reason</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for leave in leave_history %}
+          <tr>
+            <td class="py-2">{{ leave['leave_date'] }}</td>
+            <td class="py-2">{{ leave['reason'] }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Buttons -->
+    <div class="flex flex-col sm:flex-row justify-center gap-6">
+      <a
+        href="/export_csv/{{ student_info['student_id'] }}"
+        class="flex-1 text-center bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-2xl shadow-md transform hover:scale-105"
+      >
+        ⬇️ Download CSV
+      </a>
+      <a
+        href="/export_pdf/{{ student_info['student_id'] }}"
+        class="flex-1 text-center bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-2xl shadow-md transform hover:scale-105"
+      >
+        🧾 Download PDF
+      </a>
+    </div>
+
+  </div>
+<!-- Back Button -->
+<div class="text-left">
+  <a
+    href="{{ url_for('search') }}"
+    class="inline-flex items-center text-white bg-gray-700 hover:bg-gray-800 font-semibold py-2 px-4 rounded-xl shadow-md transition transform hover:scale-105"
+  >
+    ← Back
+  </a>
+</div>
+
+<script>
+async function fetchUpdates() {
+  try {
+    const response = await fetch(`/api/student_data/{{ student_info['student_id'] }}`);
+    const data = await response.json();
+    document.querySelector('circle.text-blue-400').setAttribute('stroke-dashoffset', 251 - (251 * data.attendance.attendance_percentage / 100));
+    document.querySelector('span').innerText = `${data.attendance.attendance_percentage}%`;
+  } catch (error) {
+    console.error("Error fetching updates:", error);
+  }
+}
+setInterval(fetchUpdates, 2000);
+fetchUpdates();
+</script>
+
+</body>
+</html>
